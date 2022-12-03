@@ -47,6 +47,8 @@ class UI:
     def generate_new_problem(self, sudoku):
         sudoku.generate_new_problem()
         self.refresh_box(sudoku)
+        self.get_all_correct_values(sudoku)
+        self.get_values(sudoku)
 
     def get_values(self, sudoku):
         self.refresh_box(sudoku)

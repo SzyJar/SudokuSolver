@@ -67,7 +67,10 @@ class Sudoku:
         i = 0
         j = 0
         forward = 1
+        tmp = 0
         while j <= 8 and i <= 8:
+            tmp+= 1
+            assert tmp < 50000, "50 000 attempts failed, aborted search"
             if self.value[i][j] == None:
                 valueWork[i][j] = nextNumber[i][j]
                 nextNumber[i][j] = nextNumber[i][j] + 1
@@ -122,11 +125,20 @@ class Sudoku:
             for j in range(9):
                 newProblem[i].append(None)
 
-        for i in range(8):
-            j = random.randrange(0, 8, 1)
-            k = random.randrange(0, 8, 1)
-            newProblem[j][k] = random.randrange(1, 9, 1)
-            if self.check_value(j, k, newProblem) != True:
+        tries = 2
+        while tries > 1:
+            for i in range(9):
+                for j in range(9):
+                    newProblem[i][j] = None
+            tries = 0
+            for i in range(8):
+                j = random.randrange(0, 8, 1)
+                k = random.randrange(0, 8, 1)
                 newProblem[j][k] = random.randrange(1, 9, 1)
+                while self.check_value(j, k, newProblem) != True and tries < 15:
+                    tries += 1
+                    newProblem[j][k] = random.randrange(1, 9, 1)
+                if tries >= 15:
+                    return(1)
         self.value = copy.deepcopy(newProblem)
 
