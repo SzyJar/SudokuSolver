@@ -55,7 +55,6 @@ class Sudoku:
                             return(False)          
         return(True)
         
-
     def find_values_brute_force(self):
         valueWork = copy.deepcopy(self.value)
         nextNumber = []
@@ -69,8 +68,6 @@ class Sudoku:
         j = 0
         forward = 1
         while j <= 8 and i <= 8:
-            print(f"x: {i} y: {j}")
-            print(nextNumber[i][j])
             if self.value[i][j] == None:
                 valueWork[i][j] = nextNumber[i][j]
                 nextNumber[i][j] = nextNumber[i][j] + 1
@@ -104,11 +101,32 @@ class Sudoku:
                     else:
                         j = 8
                         i = i - 1
-                        
-                            
+                                              
         self.valueCorrect = copy.deepcopy(valueWork)
-        self.value = copy.deepcopy(valueWork)
-        
-    def generate_values(self, locationX, locationY):
-        self.value[locationX][locationY] = random.randrange(0, 9, 1)
+
+    def validate_solution(self):
+        mistake = 0
+        if None in self.valueCorrect:
+            self.find_values_brute_force()
+
+        for i in range(9):
+            for j in range(9):
+                if self.valueCorrect[i][j] != self.value[i][j] and self.value[i][j] != None:
+                    mistake += 1
+        return(mistake)
+
+    def generate_new_problem(self):
+        newProblem = []
+        for i in range(9):
+            newProblem.append([])
+            for j in range(9):
+                newProblem[i].append(None)
+
+        for i in range(8):
+            j = random.randrange(0, 8, 1)
+            k = random.randrange(0, 8, 1)
+            newProblem[j][k] = random.randrange(1, 9, 1)
+            if self.check_value(j, k, newProblem) != True:
+                newProblem[j][k] = random.randrange(1, 9, 1)
+        self.value = copy.deepcopy(newProblem)
 

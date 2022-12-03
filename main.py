@@ -3,11 +3,12 @@ from sudoku import Sudoku
 from interface import UI
 
 root = tk.Tk()
-root.title("Sudoku")
+root.title("SudokuSolver")
 root.minsize(700, 700)
+root.iconbitmap('icon.ico')
 
-interface = UI(root)
 sudoku = Sudoku()
+interface = UI(root, sudoku)
 
 sudoku.enter_value(4, 0, 0)
 sudoku.enter_value(5, 8, 0)
@@ -58,14 +59,6 @@ for i in range(9):
     for j in range(9):
         interface.make_box(i, j)
 
-for i in range(9):
-    for j in range(9):
-        interface.edit_box(sudoku.get_value(i, j), i, j, sudoku)
-
-sudoku.find_values_brute_force()
-
-for i in range(9):
-    for j in range(9):
-        interface.edit_box(sudoku.get_correct_value(i, j), i, j, sudoku)
+interface.refresh_box(sudoku)
 
 root.mainloop()
