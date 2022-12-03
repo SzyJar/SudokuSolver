@@ -25,14 +25,14 @@ class Sudoku:
 
         self.value[locationX][locationY] = value
 
-    def check_value(self, locationX, locationY):
+    def check_value(self, locationX, locationY, sudoku):
         for i in range(9):
             if i != locationX:
-                if self.value[0][i] == self.value[locationX][locationY]:
+                if sudoku[i][locationY] == sudoku[locationX][locationY]:
                     return(False)
-        for j in range(9):        
+        for j in range(9):
             if j != locationY:
-                if self.value[j][0] == self.value[locationX][locationY]:
+                if sudoku[locationX][j] == sudoku[locationX][locationY]:
                     return(False)
 
         if locationX in [0, 1, 2]:
@@ -51,41 +51,63 @@ class Sudoku:
         for i in locX:
             for j in locY:
                 if i != locationX and j != locationY:
-                        if self.value[i][j] == self.value[locationX][locationY]:
+                        if sudoku[i][j] == sudoku[locationX][locationY]:
                             return(False)          
         return(True)
         
 
     def find_values_brute_force(self):
         valueWork = copy.deepcopy(self.value)
-        passedAll = 0
-        tries = 0
-        while(passedAll == 0 and tries < 9999):
-            tries = tries + 1
-            print(tries)
-            passedAll = 1
-            for i in range(9):
-                for j in range(9):
-                    sequence =[1,2,3,4,5,6,7,8,9]
-                    passed = 0
-                    while(passed == 0 and len(sequence) > 0):
-                        if self.value[i][j] == None:
-                            valueWork[i][j] = random.choice(sequence)
-                            sequence.remove(valueWork[i][j])
-                            passed = 1
-                            for k in range(9):
-                                if k != i:
-                                    if valueWork[i][j] == valueWork[k][j]:
-                                        passed = 0
-                                        passedAll = 0
-                                if k != j:
-                                    if valueWork[i][j] == valueWork[i][k]:
-                                        passed = 0
-                                        passedAll = 0                                
+        nextNumber = []
+
+        for i in range(9):
+            nextNumber.append([])
+            for j in range(9):
+                nextNumber[i].append(1)
+
+        i = 0
+        j = 0
+        forward = 1
+        while j <= 8 and i <= 8:
+            print(f"x: {i} y: {j}")
+            print(nextNumber[i][j])
+            if self.value[i][j] == None:
+                valueWork[i][j] = nextNumber[i][j]
+                nextNumber[i][j] = nextNumber[i][j] + 1
+                if self.check_value(i, j, valueWork) == False or valueWork[i][j] > 9:
+                    if valueWork[i][j] >= 9:
+                        valueWork[i][j] = None
+                        nextNumber[i][j] = 1
+                        if j > 0:
+                            j = j - 1 
                         else:
-                            passed = 1
+                            j = 8
+                            i = i - 1
+                    forward = 0
+                else:
+                    if j < 8:
+                        j = j + 1
+                    else:
+                        j = 0
+                        i = i + 1
+                    forward = 1
+            else:
+                if forward == 1:
+                    if j < 8:
+                        j = j + 1
+                    else:
+                        j = 0
+                        i = i + 1
+                elif forward == 0:
+                    if j > 0:
+                        j = j - 1
+                    else:
+                        j = 8
+                        i = i - 1
+                        
                             
         self.valueCorrect = copy.deepcopy(valueWork)
+        self.value = copy.deepcopy(valueWork)
         
     def generate_values(self, locationX, locationY):
         self.value[locationX][locationY] = random.randrange(0, 9, 1)

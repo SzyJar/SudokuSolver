@@ -23,7 +23,7 @@ class UI:
     def edit_box(self,value, locationX, locationY, sudoku):
         self.button[locationX][locationY].destroy()
         self.button[locationX][locationY] = tk.Button(self.canvas, text = value, font = ("Arial 26"),
-                                                      command = lambda: print(sudoku.check_value(locationX,locationY)))
+                                                      command = lambda: print(sudoku.check_value(locationX, locationY, sudoku.value)))
         self.button[locationX][locationY].place(height = 50, width = 50,
                                                 relx = 0.05 + 0.1 * locationX, rely = 0.1 * locationY)
 
