@@ -20,9 +20,6 @@ class Sudoku:
         return(self.valueCorrect[locationX][locationY])
 
     def enter_value(self, value, locationX, locationY):
-        assert type(value) == int, "Value has to be an integer!"
-        assert value >= 0 and value <= 9, "Value has to be in range 0 - 9!"
-
         self.value[locationX][locationY] = value
 
     def check_value(self, locationX, locationY, sudoku):
@@ -109,7 +106,7 @@ class Sudoku:
 
     def validate_solution(self):
         mistake = 0
-        if None in self.valueCorrect:
+        if None in self.valueCorrect[0]:
             self.find_values_brute_force()
 
         for i in range(9):
@@ -118,7 +115,7 @@ class Sudoku:
                     mistake += 1
         return(mistake)
 
-    def generate_new_problem(self):
+    def generate_new_problem(self, count):
         newProblem = []
         for i in range(9):
             newProblem.append([])
@@ -131,7 +128,7 @@ class Sudoku:
                 for j in range(9):
                     newProblem[i][j] = None
             tries = 0
-            for i in range(8):
+            for i in range(count):
                 j = random.randrange(0, 8, 1)
                 k = random.randrange(0, 8, 1)
                 newProblem[j][k] = random.randrange(1, 9, 1)

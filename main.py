@@ -59,6 +59,6 @@ for i in range(9):
     for j in range(9):
         interface.make_box(i, j)
 
-interface.refresh_box(sudoku)
+interface.refresh_box()
 
 root.mainloop()
