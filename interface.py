@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import filedialog
+from PIL import Image
 
 class UI:
 
@@ -44,7 +46,31 @@ class UI:
                                 command = lambda: self.draw_print())
         buttonSave.place(height = 30, width = 150,
                              relx = 0.75, rely = 0.9)
-        
+    
+    def load_images(self):
+        self.number = []
+        for i in range(10):
+            self.number.append(Image.open(f'images/{i}.png'))
+
+    def print_sudoku(self, value):
+        outputImage = Image.new('1', (2500,2500), color = 1)
+        spaceX = 0
+        spaceY = 0
+        for i in range(9):
+            if i%3 == 0 and i != 0:
+                spaceX += 20
+            spaceY = 0
+            for j in range(9):
+                if j%3 == 0 and j != 0:
+                    spaceY += 20
+                if value[i][j] == None:
+                    value[i][j] = 0
+                x = 65 + 250 * i + spaceX
+                y = 65 + 250 * j + spaceY
+                outputImage.paste(self.number[value[i][j]], (x, y))
+        path = filedialog.asksaveasfile(defaultextension = '.png', filetypes = [("png image", ".png")])
+        outputImage.save(path.name)
+
     def refresh_box(self):
         for i in range(9):
             for j in range(9):
@@ -59,12 +85,12 @@ class UI:
             self.menu.title("Save to image")
             self.menu.protocol('WM_DELETE_WINDOW', lambda: self.closeWindow(self.menu))
             self.menuIsOpen = 1
-            self.buttonSudoku = tk.Button(self.menu, text = "Print sudoku", font = ("Arial 14"),
-                                command = lambda:[self.sudoku.print_values(81)])
+            self.buttonSudoku = tk.Button(self.menu, text = "Print problem", font = ("Arial 14"),
+                                command = lambda:[self.print_sudoku(self.sudoku.value)])
             self.buttonSudoku.place(relheight = 0.15, relwidth = 0.9,
                                   relx = 0.05, rely = 0.05)
             self.buttonSolution = tk.Button(self.menu, text = "Print solution", font = ("Arial 14"),
-                                command = lambda:[self.sudoku.print_solution(30)])
+                                command = lambda:[self.print_sudoku(self.sudoku.valueCorrect)])
             self.buttonSolution.place(relheight = 0.15, relwidth = 0.9,
                                   relx = 0.05, rely = 0.25)
 
@@ -131,7 +157,6 @@ class UI:
         except:
             self.statusInfo.set("Unable to solve sudoku")
         
-
     def draw_menu(self, locationX, locationY):
         if self.menuIsOpen == 0:
             self.menu = tk.Toplevel()

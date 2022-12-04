@@ -15,5 +15,6 @@ for i in range(9):
         interface.make_box(i, j)
 
 interface.refresh_box()
+interface.load_images()
 
 root.mainloop()

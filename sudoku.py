@@ -65,7 +65,7 @@ class Sudoku:
         tmp = 0
         while j <= 8 and i <= 8:
             tmp+= 1
-            assert tmp < 90000, "90 000 attempts failed, aborted search"
+            assert tmp < 50000, "50 000 attempts failed, aborted search"
             if self.value[i][j] == None:
                 valueWork[i][j] = nextNumber[i][j]
                 nextNumber[i][j] = nextNumber[i][j] + 1
@@ -159,7 +159,7 @@ class Sudoku:
         tmp = 0
         while j >= 0 and i >= 0:
             tmp+= 1
-            assert tmp < 90000, "90 000 attempts failed, aborted search"
+            assert tmp < 50000, "50 000 attempts failed, aborted search"
             if self.value[i][j] == None:
                 valueWork[i][j] = nextNumber[i][j]
                 nextNumber[i][j] = nextNumber[i][j] + 1
