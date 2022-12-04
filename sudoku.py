@@ -55,19 +55,17 @@ class Sudoku:
     def find_values_brute_force(self):
         valueWork = copy.deepcopy(self.value)
         nextNumber = []
-
         for i in range(9):
             nextNumber.append([])
             for j in range(9):
                 nextNumber[i].append(1)
-
         i = 0
         j = 0
         forward = 1
         tmp = 0
         while j <= 8 and i <= 8:
             tmp+= 1
-            assert tmp < 50000, "50 000 attempts failed, aborted search"
+            assert tmp < 90000, "90 000 attempts failed, aborted search"
             if self.value[i][j] == None:
                 valueWork[i][j] = nextNumber[i][j]
                 nextNumber[i][j] = nextNumber[i][j] + 1
@@ -100,10 +98,9 @@ class Sudoku:
                         j = j - 1
                     else:
                         j = 8
-                        i = i - 1
-                                              
+                        i = i - 1                                     
         self.valueCorrect = copy.deepcopy(valueWork)
-
+    
     def validate_solution(self):
         mistake = 0
         if None in self.valueCorrect[0]:
@@ -115,27 +112,92 @@ class Sudoku:
                     mistake += 1
         return(mistake)
 
-    def generate_new_problem(self, count):
+    def generate_new_problem(self):
         newProblem = []
         for i in range(9):
             newProblem.append([])
             for j in range(9):
                 newProblem[i].append(None)
-
         tries = 2
         while tries > 1:
             for i in range(9):
                 for j in range(9):
                     newProblem[i][j] = None
             tries = 0
-            for i in range(count):
-                j = random.randrange(0, 8, 1)
-                k = random.randrange(0, 8, 1)
-                newProblem[j][k] = random.randrange(1, 9, 1)
+            for i in range(10):                
+                j = random.randrange(0, 9, 1)
+                k = random.randrange(0, 9, 1)
+                newProblem[j][k] = random.randrange(1, 10, 1)
                 while self.check_value(j, k, newProblem) != True and tries < 15:
                     tries += 1
-                    newProblem[j][k] = random.randrange(1, 9, 1)
+                    newProblem[j][k] = random.randrange(1, 10, 1)
                 if tries >= 15:
                     return(1)
         self.value = copy.deepcopy(newProblem)
+        
+    def clear_values(self, count):
+        for i in range(count):
+            j = random.randrange(0, 9, 1)
+            k = random.randrange(0, 9, 1)
+            while self.valueCorrect[j][k] == None:
+                j = random.randrange(0, 9, 1)
+                k = random.randrange(0, 9, 1)
+            self.valueCorrect[j][k] = None
+        self.value = copy.deepcopy(self.valueCorrect)
+
+    def check_for_extra_solution(self):
+        #brute force backwards
+        valueWork = copy.deepcopy(self.value)
+        nextNumber = []
+        for i in range(9):
+            nextNumber.append([])
+            for j in range(9):
+                nextNumber[i].append(1)
+        i = 8
+        j = 8
+        forward = 0
+        tmp = 0
+        while j >= 0 and i >= 0:
+            tmp+= 1
+            assert tmp < 90000, "90 000 attempts failed, aborted search"
+            if self.value[i][j] == None:
+                valueWork[i][j] = nextNumber[i][j]
+                nextNumber[i][j] = nextNumber[i][j] + 1
+                if self.check_value(i, j, valueWork) == False or valueWork[i][j] > 9:
+                    if valueWork[i][j] >= 9:
+                        valueWork[i][j] = None
+                        nextNumber[i][j] = 1
+                        if j < 8:
+                            j = j + 1 
+                        else:
+                            j = 0
+                            i = i + 1
+                    forward = 1
+                else:
+                    if j > 0:
+                        j = j - 1
+                    else:
+                        j = 8
+                        i = i - 1
+                    forward = 0
+            else:
+                if forward == 1:
+                    if j < 8:
+                        j = j + 1
+                    else:
+                        j = 0
+                        i = i + 1
+                elif forward == 0:
+                    if j > 0:
+                        j = j - 1
+                    else:
+                        j = 8
+                        i = i - 1  
+        for i in range(9):
+            for j in range(9):
+                if self.valueCorrect[i][j] != valueWork[i][j]:
+                    return(True)
+        return(False)
+        
+
 

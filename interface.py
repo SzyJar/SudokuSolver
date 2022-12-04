@@ -39,45 +39,67 @@ class UI:
                                 command = lambda: self.draw_generate())
         buttonGenerate.place(height = 30, width = 150,
                              relx = 0.75, rely = 0.95)
+
+        buttonSave = tk.Button(self.canvas, text = "Save sudoku", font = ("Arial 14"),
+                                command = lambda: self.draw_print())
+        buttonSave.place(height = 30, width = 150,
+                             relx = 0.75, rely = 0.9)
         
     def refresh_box(self):
         for i in range(9):
             for j in range(9):
                 self.edit_box(self.sudoku.get_value(i, j), i, j)
 
+    def draw_print(self):
+        if self.menuIsOpen == 0:
+            self.menu = tk.Toplevel()
+            self.menu.minsize(200, 200)
+            self.menu.attributes('-toolwindow', True)
+            self.menu.attributes('-topmost', True)
+            self.menu.title("Save to image")
+            self.menu.protocol('WM_DELETE_WINDOW', lambda: self.closeWindow(self.menu))
+            self.menuIsOpen = 1
+            self.buttonSudoku = tk.Button(self.menu, text = "Print sudoku", font = ("Arial 14"),
+                                command = lambda:[self.sudoku.print_values(81)])
+            self.buttonSudoku.place(relheight = 0.15, relwidth = 0.9,
+                                  relx = 0.05, rely = 0.05)
+            self.buttonSolution = tk.Button(self.menu, text = "Print solution", font = ("Arial 14"),
+                                command = lambda:[self.sudoku.print_solution(30)])
+            self.buttonSolution.place(relheight = 0.15, relwidth = 0.9,
+                                  relx = 0.05, rely = 0.25)
+
     def draw_generate(self):
         if self.menuIsOpen == 0:
             self.menu = tk.Toplevel()
-            self.menu.minsize(200, 250)
+            self.menu.minsize(200, 200)
+            
             self.menu.attributes('-toolwindow', True)
             self.menu.attributes('-topmost', True)
+            self.menu.title("Generate new")
             self.menu.protocol('WM_DELETE_WINDOW', lambda: self.closeWindow(self.menu))
             self.menuIsOpen = 1
             self.buttonClean = tk.Button(self.menu, text = "Clean sudoku", font = ("Arial 14"),
-                                command = lambda:[self.generate_new_problem(0)])
+                                command = lambda:[self.generate_new_problem(81)])
             self.buttonClean.place(relheight = 0.15, relwidth = 0.9,
                                   relx = 0.05, rely = 0.05)
             self.buttonEasy = tk.Button(self.menu, text = "Easy sudoku", font = ("Arial 14"),
-                                command = lambda:[self.generate_new_problem(25)])
+                                command = lambda:[self.generate_new_problem(30)])
             self.buttonEasy.place(relheight = 0.15, relwidth = 0.9,
                                   relx = 0.05, rely = 0.25)
-            self.buttonMedium = tk.Button(self.menu, text = "Medium sudoku", font = ("Arial 14"),
-                                command = lambda:[self.generate_new_problem(15)])
-            self.buttonMedium.place(relheight = 0.15, relwidth = 0.9,
-                                  relx = 0.05, rely = 0.45)
             self.buttonHard = tk.Button(self.menu, text = "Hard sudoku", font = ("Arial 14"),
-                                command = lambda:[self.generate_new_problem(9)])
+                                command = lambda:[self.generate_new_problem(50)])
             self.buttonHard.place(relheight = 0.15, relwidth = 0.9,
-                                  relx = 0.05, rely = 0.65)
+                                  relx = 0.05, rely = 0.45)
 
     def generate_new_problem(self, count):
-        self.statusInfo.set("Generating new...")
-        self.sudoku.generate_new_problem(count)
-        self.refresh_box()
+        self.sudoku.generate_new_problem()
         self.get_all_correct_values()
-        self.get_values()
-
-    def get_values(self):
+        self.sudoku.clear_values(count)
+        self.get_all_correct_values()
+        self.clean_solution()
+        self.refresh_box()
+        
+    def clean_solution(self):
         self.refresh_box()
         self.buttonShow.destroy()
         self.buttonSolve = tk.Button(self.canvas, text = "Show solution", font = ("Arial 14"),
@@ -86,7 +108,6 @@ class UI:
                                relx = 0.5, rely = 0.95)
 
     def validate_solution(self):
-        self.statusInfo.set("Validating...")
         mistakes = self.sudoku.validate_solution()
         if self.sudoku.validate_solution() == 0:
             self.statusInfo.set("No mistakes has been made")
@@ -94,20 +115,22 @@ class UI:
             self.statusInfo.set(f"{mistakes} mistakes has been found")
 
     def get_all_correct_values(self):
-        self.statusInfo.set("Looking for solution...")
         try:
             self.sudoku.find_values_brute_force()
             for i in range(9):
                 for j in range(9):
                     self.edit_box(self.sudoku.get_correct_value(i, j), i, j)
-            self.statusInfo.set("Solution has been found")
+            self.statusInfo.set("One solution has been found")
             self.buttonSolve.destroy()
             self.buttonShow = tk.Button(self.canvas, text = "Clean solution", font = ("Arial 14"),
-                                        command = lambda: self.get_values())
+                                        command = lambda: self.clean_solution())
             self.buttonShow.place(height = 30, width = 150,
-                                  relx = 0.5, rely = 0.95)
+                                    relx = 0.5, rely = 0.95)
+            if self.sudoku.check_for_extra_solution() == True:
+                self.statusInfo.set(f"Found more than one solution")
         except:
             self.statusInfo.set("Unable to solve sudoku")
+        
 
     def draw_menu(self, locationX, locationY):
         if self.menuIsOpen == 0:
