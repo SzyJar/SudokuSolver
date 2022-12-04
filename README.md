@@ -1,6 +1,4 @@
 # SudokuSolver
-A set of tools with graphical interface for solving, generating new, printing or playing sudoku.
-
 Application provides tools to create new sudoku, edit sudoku problem,<br />determine if a sudoku can be solved or if there is only one solution
 to a problem.<br />Prepared sudoku can be saved to a .png file and printed.
 
