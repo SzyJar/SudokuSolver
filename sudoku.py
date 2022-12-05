@@ -1,6 +1,7 @@
 import random
 import copy
 
+
 class Sudoku:
     
     def __init__(self):
@@ -128,11 +129,10 @@ class Sudoku:
                 j = random.randrange(0, 9, 1)
                 k = random.randrange(0, 9, 1)
                 newProblem[j][k] = random.randrange(1, 10, 1)
-                while self.check_value(j, k, newProblem) != True and tries < 15:
+                while self.check_value(j, k, newProblem) != True:
                     tries += 1
                     newProblem[j][k] = random.randrange(1, 10, 1)
-                if tries >= 15:
-                    return(1)
+                    assert tries < 15, "Too many loop repeats"
         self.value = copy.deepcopy(newProblem)
         
     def clear_values(self, count):

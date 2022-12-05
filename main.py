@@ -2,10 +2,11 @@ import tkinter as tk
 from sudoku import Sudoku
 from interface import UI
 
+
 root = tk.Tk()
 root.title("SudokuSolver")
 root.minsize(700, 700)
-root.iconbitmap('icon.ico')
+root.iconbitmap('images/icon.ico')
 
 sudoku = Sudoku()
 interface = UI(root, sudoku)

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from PIL import Image
 
+
 class UI:
 
     def __init__(self, master, sudoku):
@@ -122,6 +123,9 @@ class UI:
         self.get_all_correct_values()
         self.sudoku.clear_values(count)
         self.get_all_correct_values()
+        self.clean_solution()
+        if self.sudoku.check_for_extra_solution() == True:
+            self.generate_new_problem(count)
         self.clean_solution()
         self.refresh_box()
         
