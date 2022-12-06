@@ -65,7 +65,7 @@ class Sudoku:
         forward = 1
         tmp = 0
         while j <= 8 and i <= 8:
-            tmp+= 1
+            tmp += 1
             assert tmp < 50000, "50 000 attempts failed, aborted search"
             if self.value[i][j] == None:
                 valueWork[i][j] = nextNumber[i][j]
@@ -113,26 +113,29 @@ class Sudoku:
                     mistake += 1
         return(mistake)
 
-    def generate_new_problem(self):
+    def generate_new_problem_base(self):
         newProblem = []
         for i in range(9):
             newProblem.append([])
             for j in range(9):
                 newProblem[i].append(None)
         tries = 2
+        loopBrake = 0
         while tries > 1:
+            loopBrake += 1
+            assert loopBrake < 50000, "50 000 attempts failed, generating problem failed"
             for i in range(9):
                 for j in range(9):
                     newProblem[i][j] = None
             tries = 0
-            for i in range(10):                
+            for i in range(15):                
                 j = random.randrange(0, 9, 1)
                 k = random.randrange(0, 9, 1)
                 newProblem[j][k] = random.randrange(1, 10, 1)
                 while self.check_value(j, k, newProblem) != True:
                     tries += 1
                     newProblem[j][k] = random.randrange(1, 10, 1)
-                    assert tries < 15, "Too many loop repeats"
+                    assert tries < 25, "Too many loop repeats"
         self.value = copy.deepcopy(newProblem)
         
     def clear_values(self, count):

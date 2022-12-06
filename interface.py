@@ -69,8 +69,10 @@ class UI:
                 x = 65 + 250 * i + spaceX
                 y = 65 + 250 * j + spaceY
                 outputImage.paste(self.number[value[i][j]], (x, y))
+        self.closeWindow(self.menu)
         path = filedialog.asksaveasfile(defaultextension = '.png', filetypes = [("png image", ".png")])
         outputImage.save(path.name)
+        
 
     def refresh_box(self):
         for i in range(9):
@@ -118,14 +120,15 @@ class UI:
             self.buttonHard.place(relheight = 0.15, relwidth = 0.9,
                                   relx = 0.05, rely = 0.45)
 
-    def generate_new_problem(self, count):
-        self.sudoku.generate_new_problem()
+    def generate_new_problem(self, count, iteration = 0):
+        self.sudoku.generate_new_problem_base()
         self.get_all_correct_values()
         self.sudoku.clear_values(count)
         self.get_all_correct_values()
         self.clean_solution()
-        if self.sudoku.check_for_extra_solution() == True:
-            self.generate_new_problem(count)
+        if self.sudoku.check_for_extra_solution() == True and count < 51 and iteration < 10:
+            iteration = iteration + 1
+            self.generate_new_problem(count, iteration)            
         self.clean_solution()
         self.refresh_box()
         
@@ -142,7 +145,10 @@ class UI:
         if self.sudoku.validate_solution() == 0:
             self.statusInfo.set("No mistakes has been made")
         else:
-            self.statusInfo.set(f"{mistakes} mistakes has been found")
+            if mistakes == 1:
+                self.statusInfo.set("One mistake has been found")
+            else:
+                self.statusInfo.set(f"{mistakes} mistakes has been found")
 
     def get_all_correct_values(self):
         try:
@@ -157,7 +163,7 @@ class UI:
             self.buttonShow.place(height = 30, width = 150,
                                     relx = 0.5, rely = 0.95)
             if self.sudoku.check_for_extra_solution() == True:
-                self.statusInfo.set(f"Found more than one solution")
+                self.statusInfo.set("Found more than one solution")
         except:
             self.statusInfo.set("Unable to solve sudoku")
         
