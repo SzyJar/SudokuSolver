@@ -63,10 +63,10 @@ class Sudoku:
         i = 0
         j = 0
         forward = 1
-        tmp = 0
+        loopBrake = 0
         while j <= 8 and i <= 8:
-            tmp += 1
-            assert tmp < 50000, "50 000 attempts failed, aborted search"
+            loopBrake += 1
+            assert loopBrake < 10000, "10 000 attempts failed, aborted search ( find_values_brute_force )"
             if self.value[i][j] == None:
                 valueWork[i][j] = nextNumber[i][j]
                 nextNumber[i][j] = nextNumber[i][j] + 1
@@ -123,7 +123,7 @@ class Sudoku:
         loopBrake = 0
         while tries > 1:
             loopBrake += 1
-            assert loopBrake < 50000, "50 000 attempts failed, generating problem failed"
+            assert loopBrake < 10000, "10 000 attempts failed, generating problem failed ( generate_new_problem_base )"
             for i in range(9):
                 for j in range(9):
                     newProblem[i][j] = None
@@ -135,7 +135,7 @@ class Sudoku:
                 while self.check_value(j, k, newProblem) != True:
                     tries += 1
                     newProblem[j][k] = random.randrange(1, 10, 1)
-                    assert tries < 25, "Too many loop repeats"
+                    assert tries < 25, "Generating new problem failed"
         self.value = copy.deepcopy(newProblem)
         
     def clear_values(self, count):
@@ -149,7 +149,7 @@ class Sudoku:
         self.value = copy.deepcopy(self.valueCorrect)
 
     def check_for_extra_solution(self):
-        #brute force backwards
+        # Brute force backwards
         valueWork = copy.deepcopy(self.value)
         nextNumber = []
         for i in range(9):
@@ -159,10 +159,10 @@ class Sudoku:
         i = 8
         j = 8
         forward = 0
-        tmp = 0
+        loopBrake = 0
         while j >= 0 and i >= 0:
-            tmp+= 1
-            assert tmp < 50000, "50 000 attempts failed, aborted search"
+            loopBrake += 1
+            assert loopBrake < 30000, "30 000 attempts failed, aborted search ( check_for_extra_solution )"
             if self.value[i][j] == None:
                 valueWork[i][j] = nextNumber[i][j]
                 nextNumber[i][j] = nextNumber[i][j] + 1

@@ -47,7 +47,9 @@ class UI:
                                 command = lambda: self.draw_print())
         buttonSave.place(height = 30, width = 150,
                              relx = 0.75, rely = 0.9)
-    
+        
+        self.get_all_correct_values()
+
     def load_images(self):
         self.number = []
         for i in range(10):
@@ -116,7 +118,7 @@ class UI:
             self.buttonEasy.place(relheight = 0.15, relwidth = 0.9,
                                   relx = 0.05, rely = 0.25)
             self.buttonHard = tk.Button(self.menu, text = "Hard sudoku", font = ("Arial 14"),
-                                command = lambda:[self.generate_new_problem(50)])
+                                command = lambda:[self.generate_new_problem(40)])
             self.buttonHard.place(relheight = 0.15, relwidth = 0.9,
                                   relx = 0.05, rely = 0.45)
 
@@ -125,12 +127,12 @@ class UI:
         self.get_all_correct_values()
         self.sudoku.clear_values(count)
         self.get_all_correct_values()
-        self.clean_solution()
+        
         if self.sudoku.check_for_extra_solution() == True and count < 51 and iteration < 10:
             iteration = iteration + 1
-            self.generate_new_problem(count, iteration)            
+            self.generate_new_problem(count, iteration) 
+
         self.clean_solution()
-        self.refresh_box()
         
     def clean_solution(self):
         self.refresh_box()
